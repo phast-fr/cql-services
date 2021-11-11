@@ -49,6 +49,7 @@ class LibraryResourceProvider<LibraryType>(
     override fun resolveLibraryById(libraryId: String): LibraryType? {
         return this.fhirClient
             .read(cls)
+            .resourceType("Library")
             .resourceId(libraryId)
             .execute()
             .block()

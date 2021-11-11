@@ -49,8 +49,8 @@ class LibrarySourceProvider<LibraryType, AttachmentType>(
                 versionedIdentifier.version
             )
 
-            library?.let<LibraryType, Iterable<AttachmentType>?> { library ->
-                this.getAttachments(library)
+            library?.let<LibraryType, Iterable<AttachmentType>?> {
+                this.getAttachments(it)
             }?.forEach { attachment ->
                 if (this.getContentType(attachment) == "text/cql") {
                     return ByteArrayInputStream(this.getContent(attachment))

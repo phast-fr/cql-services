@@ -24,29 +24,41 @@
 
 package fr.phast.cql.services.helpers
 
+import fr.phast.cql.services.content.LibraryContentType
 import org.cqframework.cql.cql2elm.CqlTranslator
 import org.cqframework.cql.cql2elm.CqlTranslatorException
 import org.cqframework.cql.cql2elm.LibraryManager
 import org.cqframework.cql.cql2elm.ModelManager
 import org.cqframework.cql.elm.execution.Library
 import org.opencds.cqf.cql.engine.execution.CqlLibraryReader
+import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import javax.xml.bind.JAXBException
 
 object TranslatorHelper {
 
-    fun readLibrary(xmlStream: InputStream): Library {
-        return try {
-            CqlLibraryReader.read(xmlStream)
-        }
-        catch (e: IOException) {
-            throw IllegalArgumentException("Error encountered while reading ELM xml: " + e.message)
-        }
-        catch (e: JAXBException) {
-            throw IllegalArgumentException("Error encountered while reading ELM xml: " + e.message)
+    fun readLibrary(stream: InputStream, contentType: LibraryContentType): Library {
+        return when (contentType) {
+            LibraryContentType.XML -> try {
+                CqlLibraryReader.read(stream)
+            }
+            catch (e: IOException) {
+                throw IllegalArgumentException("Error encountered while reading ELM xml: " + e.message)
+            }
+            catch (e: JAXBException) {
+                throw IllegalArgumentException("Error encountered while reading ELM xml: " + e.message)
+            }
+            LibraryContentType.JXSON -> try {
+                JsonCqlLibraryReader.read(InputStreamReader(stream))
+            }
+            catch (e: IOException) {
+                throw IllegalArgumentException("Error encountered while reading ELM json: " + e.message)
+            }
+            else -> throw IllegalArgumentException("Error encountered: unsupported format !")
         }
     }
 
@@ -81,8 +93,8 @@ object TranslatorHelper {
     fun translateLibrary(translator: CqlTranslator): Library {
         return readLibrary(
             ByteArrayInputStream(
-                translator.toXml().toByteArray(StandardCharsets.UTF_8)
-            )
+                translator.toJxson().toByteArray(StandardCharsets.UTF_8)
+            ), LibraryContentType.JXSON
         )
     }
 

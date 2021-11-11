@@ -24,6 +24,7 @@
 
 package fr.phast.cql.services.loaders
 
+import fr.phast.cql.services.content.LibraryContentType
 import fr.phast.cql.services.helpers.TranslatorHelper.errorsToString
 import fr.phast.cql.services.helpers.TranslatorHelper.getTranslator
 import fr.phast.cql.services.helpers.TranslatorHelper.readLibrary
@@ -87,8 +88,8 @@ class LibraryLoader(private val libraryManager: LibraryManager,
             }
             readLibrary(
                 ByteArrayInputStream(
-                    CqlTranslator.convertToXml(translatedLibrary).toByteArray(StandardCharsets.UTF_8)
-                )
+                    CqlTranslator.convertToJxson(translatedLibrary).toByteArray(StandardCharsets.UTF_8)
+                ), LibraryContentType.JXSON
             )
         }
         catch (e: JAXBException) {
