@@ -80,8 +80,7 @@ object TranslatorHelper {
         )
         val translator = try {
             CqlTranslator.fromStream(
-                cqlStream, modelManager, libraryManager,
-                *options.toTypedArray()
+                cqlStream, modelManager, libraryManager, *options.toTypedArray()
             )
         }
         catch (e: IOException) {

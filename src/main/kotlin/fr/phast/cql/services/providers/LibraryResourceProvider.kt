@@ -25,28 +25,30 @@
 package fr.phast.cql.services.providers
 
 import org.hl7.fhir.r4.client.rest.RestClient
+import org.hl7.fhir.r4.model.BundleEntry
 import org.hl7.fhir.r4.model.Endpoint
+import org.hl7.fhir.r4.model.Library
 import org.hl7.fhir.r4.model.StringType
 import org.slf4j.LoggerFactory
 
-class LibraryResourceProvider<LibraryType>(
+class LibraryResourceProvider(
     uri: String,
-    private val cls: Class<LibraryType>): LibraryResolutionProvider<LibraryType> {
+    private val cls: Class<Library>): LibraryResolutionProvider<Library> {
 
     private val fhirClient = RestClient(uri)
 
-    constructor(uri: String, cls: Class<LibraryType>, credential: String?) : this(uri, cls) {
+    constructor(uri: String, cls: Class<Library>, credential: String?) : this(uri, cls) {
         this.fhirClient.tokenType = "Basic"
         this.fhirClient.credential = credential
     }
 
-    constructor(endpoint: Endpoint, cls: Class<LibraryType>): this(endpoint.address.value, cls) {
+    constructor(endpoint: Endpoint, cls: Class<Library>): this(endpoint.address.value, cls) {
         this.fhirClient.tokenType = "Basic"
         this.fhirClient.credential = endpoint.header?.reduce { acc, stringType ->
             StringType("${acc.value}\n${stringType.value}") }.toString()
     }
 
-    override fun resolveLibraryById(libraryId: String): LibraryType? {
+    override fun resolveLibraryById(libraryId: String): Library? {
         return this.fhirClient
             .read(cls)
             .resourceType("Library")
@@ -56,7 +58,21 @@ class LibraryResourceProvider<LibraryType>(
             ?.body
     }
 
-    override fun resolveLibraryByName(libraryName: String, libraryVersion: String): LibraryType? {
+    override fun resolveLibraryByName(libraryName: String, libraryVersion: String): Library {
+        val libraries = getLibraries(libraryName, libraryVersion)
+        return selectFromList(libraries, libraryVersion) { x -> x.version?.value }
+            ?: throw IllegalArgumentException(String.format("Could not resolve library name %s", libraryName))
+    }
+
+    override fun resolveLibraryByCanonicalUrl(libraryUrl: String): Library? {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(library: Library) {
+        TODO("Not yet implemented")
+    }
+
+    private fun getLibraries(libraryName: String, libraryVersion: String): Iterable<Library> {
         val response = this.fhirClient
             .search()
             .withResourceType("Library")
@@ -64,15 +80,16 @@ class LibraryResourceProvider<LibraryType>(
             .withVersion(libraryVersion)
             .execute()
             .block()
-        return response?.body?.entry?.get(0)?.resource as LibraryType?
+        if (response?.body?.entry != null) {
+            return resolveLibraries(response.body?.entry!!)
+        }
+        return listOf()
     }
 
-    override fun resolveLibraryByCanonicalUrl(libraryUrl: String): LibraryType? {
-        TODO("Not yet implemented")
-    }
-
-    override fun update(library: LibraryType) {
-        TODO("Not yet implemented")
+    private fun resolveLibraries(entries: List<BundleEntry>): Iterable<Library> {
+        return entries.map { entry ->
+            entry.resource as Library
+        }
     }
 
     companion object {

@@ -19,7 +19,7 @@ class CacheAwareLibraryLoaderDecorator(
 
     private val libraryCache = libraryCache?: mutableMapOf()
 
-    override fun load(libraryIdentifier: VersionedIdentifier?): Library? {
+    override fun load(libraryIdentifier: VersionedIdentifier): Library? {
         var library = libraryCache[libraryIdentifier]
         if (library != null && translatorOptionsMatch(library)) { // Bug on xml libraries not getting annotations
             return library
@@ -28,7 +28,7 @@ class CacheAwareLibraryLoaderDecorator(
         if (library == null) {
             return null
         }
-        libraryCache[libraryIdentifier!!] = library
+        libraryCache[libraryIdentifier] = library
         return library
     }
 

@@ -72,8 +72,8 @@ interface LibraryResolutionProvider<LibraryType> {
         if (version1 == null && version2 != null) {
             return 1
         }
-        val string1Vals = version1!!.split("\\.").toTypedArray()
-        val string2Vals = version2!!.split("\\.").toTypedArray()
+        val string1Vals = version1!!.split(".").toTypedArray()
+        val string2Vals = version2!!.split(".").toTypedArray()
         val length = string1Vals.size.coerceAtLeast(string2Vals.size)
         for (i in 0 until length) {
             val v1 = if (i < string1Vals.size) string1Vals[i].toInt() else 0
