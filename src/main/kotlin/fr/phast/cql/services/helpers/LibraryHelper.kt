@@ -36,13 +36,13 @@ import org.hl7.fhir.r4.model.PlanDefinition
 object LibraryHelper {
 
     fun createLibraryLoader(provider: LibraryResolutionProvider<Library>): LibraryLoader {
-        val modelManager = ModelManager()
-        val libraryManager = LibraryManager(modelManager)
+        val libraryManager = LibraryManager(ModelManager())
         libraryManager.librarySourceLoader.clearProviders()
         libraryManager.librarySourceLoader.registerProvider(
             LibrarySourceProvider(provider,
-                { x -> x.content?.asIterable() }, { x -> x.contentType?.value }) { x -> x.data?.toByteArray() })
-        return LibraryLoader(libraryManager, modelManager)
+                { x -> x.content?.asIterable() }, { x -> x.contentType?.value }, { x -> x.data?.toByteArray() })
+        )
+        return LibraryLoader(libraryManager)
     }
 
     fun resolveLibraryById(
@@ -58,7 +58,7 @@ object LibraryHelper {
         planDefinition: PlanDefinition,
         libraryLoader: org.opencds.cqf.cql.engine.execution.LibraryLoader,
         libraryResourceProvider: LibraryResolutionProvider<Library>
-    ): org.cqframework.cql.elm.execution.Library? {
+    ): org.cqframework.cql.elm.execution.Library {
         val id = CanonicalHelper.getId(planDefinition.library!![0])
         return resolveLibraryById(id, libraryLoader, libraryResourceProvider)
             ?: throw IllegalArgumentException(

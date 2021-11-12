@@ -22,21 +22,19 @@ import java.util.*
 import javax.xml.bind.JAXBException
 
 class TranslatingLibraryLoader(
-    modelManager: ModelManager,
+    private val libraryManager: LibraryManager,
     private val libraryContentProviders: List<LibraryContentProvider>,
     translatorOptions: CqlTranslatorOptions?
 ): TranslatorOptionAwareLibraryLoader {
-
-    private val libraryManager = LibraryManager(modelManager).also {
-        libraryContentProviders.forEach { provider ->
-            it.librarySourceLoader.registerProvider(provider)
-        }
-    }
 
     private val cqlTranslatorOptions = translatorOptions ?: CqlTranslatorOptions.defaultOptions()
 
     override fun getCqlTranslatorOptions(): CqlTranslatorOptions {
         return cqlTranslatorOptions
+    }
+
+    override fun getLibraryManager(): LibraryManager {
+        return libraryManager
     }
 
     override fun load(libraryIdentifier: VersionedIdentifier): Library {
@@ -117,7 +115,9 @@ class TranslatingLibraryLoader(
         }
         if (library != null) {
             return try {
-                this.readJxson(CqlTranslator.convertToJxson(library.library))
+                // note cannot use jxson version
+                // best way is use a mapper between ELM to Engine models
+                this.readXml(CqlTranslator.convertToXml(library.library))
             }
             catch (e: Exception) {
                 throw CqlException(String.format("Mapping of library %s failed", libraryIdentifier.id), e)

@@ -20,22 +20,6 @@ class LibraryService(
     private val translatorOptions: CqlTranslatorOptions
 ) {
 
-    fun getModelManager(): ModelManager {
-        return CacheAwareModelManager(modelCache)
-    }
-
-    fun getLibraryManager(provider: LibraryResolutionProvider<org.hl7.fhir.r4.model.Library>): LibraryManager {
-        val contentProviders =
-            listOf<LibraryContentProvider>(LibraryContentProviderImpl(provider,
-                { x -> x.content },
-                { x -> x.contentType?.value }) { x -> x.data?.toByteArray() })
-        val libraryManager = LibraryManager(getModelManager())
-        contentProviders.forEach { contentProvider ->
-            libraryManager.librarySourceLoader.registerProvider(contentProvider)
-        }
-        return libraryManager
-    }
-
     fun getTranslatorOptions(): CqlTranslatorOptions {
         return translatorOptions
     }
@@ -47,16 +31,31 @@ class LibraryService(
     fun createLibraryLoader(
         provider: LibraryResolutionProvider<org.hl7.fhir.r4.model.Library>
     ): LibraryLoader {
-        val modelManager: ModelManager = CacheAwareModelManager(modelCache)
-        val libraryManager = LibraryManager(modelManager)
-        libraryManager.librarySourceLoader.clearProviders()
-        val contentProviders =
-            listOf<LibraryContentProvider>(LibraryContentProviderImpl(provider,
-                { x -> x.content }, { x -> x.contentType?.value }) { x -> x.data?.toByteArray() })
+        val contentProvider = getLibraryContentProvider(provider)
+        val libraryManager = getLibraryManager(getModelManager(), contentProvider)
         val translatingLibraryLoader = TranslatingLibraryLoader(
-            modelManager, contentProviders,
-            translatorOptions
+            libraryManager, listOf(contentProvider), translatorOptions
         )
         return CacheAwareLibraryLoaderDecorator(translatingLibraryLoader, libraryCache)
+    }
+
+    private fun getModelManager(): ModelManager {
+        return CacheAwareModelManager(modelCache)
+    }
+
+    private fun getLibraryContentProvider(provider: LibraryResolutionProvider<org.hl7.fhir.r4.model.Library>):
+            LibraryContentProvider {
+        return LibraryContentProviderImpl(provider,
+            { x -> x.content },
+            { x -> x.contentType?.value },
+            { x -> x.data?.toByteArray() }
+        )
+    }
+
+    private fun getLibraryManager(modelManager: ModelManager,
+                                  libraryContentProvider: LibraryContentProvider): LibraryManager {
+        val libraryManager = LibraryManager(modelManager)
+        libraryManager.librarySourceLoader.registerProvider(libraryContentProvider)
+        return libraryManager
     }
 }

@@ -36,17 +36,12 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 import javax.xml.bind.JAXBException
 
-class LibraryLoader(private val libraryManager: LibraryManager,
-                    private val modelManager: ModelManager): LibraryLoader {
+class LibraryLoader(private val libraryManager: LibraryManager): LibraryLoader {
 
     private val libraries = mutableMapOf<String, Library>()
 
     fun getLibraryManager(): LibraryManager {
         return libraryManager
-    }
-
-    fun getModelManager(): ModelManager {
-        return modelManager
     }
 
     override fun load(libraryIdentifier: VersionedIdentifier?): Library {
@@ -82,14 +77,16 @@ class LibraryLoader(private val libraryManager: LibraryManager,
             throw IllegalArgumentException(errorsToString(errors))
         }
         return try {
-            val translator: CqlTranslator = getTranslator("", libraryManager, modelManager)
+            val translator: CqlTranslator = getTranslator("", libraryManager, libraryManager.modelManager)
             if (translator.errors.size > 0) {
                 throw IllegalArgumentException(errorsToString(translator.errors))
             }
+            // Note cannot use jxson version
+            // best way is use a mapper between ELM to Engine models
             readLibrary(
                 ByteArrayInputStream(
-                    CqlTranslator.convertToJxson(translatedLibrary).toByteArray(StandardCharsets.UTF_8)
-                ), LibraryContentType.JXSON
+                    CqlTranslator.convertToXml(translatedLibrary).toByteArray(StandardCharsets.UTF_8)
+                ), LibraryContentType.XML
             )
         }
         catch (e: JAXBException) {
