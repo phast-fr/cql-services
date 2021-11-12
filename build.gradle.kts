@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "fr.phast"
-version = "0.0.12-SNAPSHOT"
+version = "0.0.13-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -31,7 +31,7 @@ dependencies {
     implementation("org.opencds.cqf.cql:engine:1.5.2")
 
     implementation("fr.phast:phast-fhir-kt:0.0.10-SNAPSHOT")
-    implementation("fr.phast:cql-engine-fhir:0.0.8-SNAPSHOT")
+    implementation("fr.phast:cql-engine-fhir:0.0.9-SNAPSHOT")
 }
 
 tasks.withType<KotlinCompile> {
