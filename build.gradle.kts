@@ -28,14 +28,14 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
     id("java-library")
     id("maven-publish")
     id("signing")
 }
 
 group = "fr.phast"
-version = "0.0.14-SNAPSHOT"
+version = "0.0.17-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -48,8 +48,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:2.5.6")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.6")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.0")
 
     implementation("info.cqframework:cql-to-elm:1.5.4")
     implementation("org.opencds.cqf.cql:engine:1.5.2")

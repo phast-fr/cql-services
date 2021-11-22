@@ -92,8 +92,8 @@ object TranslatorHelper {
     fun translateLibrary(translator: CqlTranslator): Library {
         return readLibrary(
             ByteArrayInputStream(
-                translator.toJxson().toByteArray(StandardCharsets.UTF_8)
-            ), LibraryContentType.JXSON
+                translator.toXml().toByteArray(StandardCharsets.UTF_8)
+            ), LibraryContentType.XML
         )
     }
 

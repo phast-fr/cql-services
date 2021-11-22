@@ -81,7 +81,9 @@ class LibraryResourceProvider(
             .execute()
             .block()
         if (response?.body?.entry != null) {
-            return resolveLibraries(response.body?.entry!!)
+            return resolveLibraries(response.body?.entry!!).filter { l ->
+                l.name != null && l.name!!.value == libraryName
+            }
         }
         return listOf()
     }

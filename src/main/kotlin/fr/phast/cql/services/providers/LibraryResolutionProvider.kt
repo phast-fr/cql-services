@@ -43,13 +43,13 @@ interface LibraryResolutionProvider<LibraryType> {
     ): LibraryType? {
         var library: LibraryType? = null
         var maxVersion: LibraryType? = null
-        for (l in libraries) {
+        libraries.forEach { l ->
             val currentVersion = getVersion(l)
             if (currentVersion == libraryVersion) {
                 library = l
             }
             if (maxVersion == null || compareVersions(
-                    getVersion(maxVersion),
+                    getVersion(maxVersion!!),
                     getVersion(l)
                 ) < 0
             ) {
