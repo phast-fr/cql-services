@@ -28,17 +28,19 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.21"
+    id("java")
     id("java-library")
     id("maven-publish")
     id("signing")
 }
 
 group = "fr.phast"
-version = "0.0.17-SNAPSHOT"
+version = "0.0.21-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
@@ -48,14 +50,25 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.0")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.10")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.10")
 
-    implementation("info.cqframework:cql-to-elm:1.5.4")
-    implementation("org.opencds.cqf.cql:engine:1.5.2")
+    api("info.cqframework:model:1.5.11")
+    //api("info.cqframework:model-jaxb:2.0.0")
+    //api("info.cqframework:model-jackson:2.0.0")
+    api("info.cqframework:elm:1.5.11")
+    //api("info.cqframework:elm-jaxb:2.0.0")
+    //api("info.cqframework:elm-jackson:2.0.0")
+    //api("info.cqframework:quick:2.0.0")
+    api("info.cqframework:cql-to-elm:1.5.11")
+    //implementation("org.mapstruct:mapstruct:1.5.2.Final")
 
-    implementation("fr.phast:phast-fhir-kt:0.0.10-SNAPSHOT")
-    implementation("fr.phast:cql-engine-fhir:0.0.9-SNAPSHOT")
+    //api("org.jvnet.jaxb2_commons:jaxb2-basics-runtime:0.13.1")
+    //api("javax.xml.bind:jaxb-api:2.3.1")
+    //api("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
+    //api("org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2")
+
+    api("fr.phast:cql-engine-fhir:0.0.23-SNAPSHOT")
 }
 
 tasks.withType<KotlinCompile> {
