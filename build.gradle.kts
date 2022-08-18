@@ -28,7 +28,11 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
+    id("org.springframework.boot") version "2.6.11"
+    id("io.spring.dependency-management") version "1.0.13.RELEASE"
     kotlin("jvm") version "1.6.21"
+    kotlin("plugin.spring") version "1.6.21"
+
     id("java")
     id("java-library")
     id("maven-publish")
@@ -36,7 +40,7 @@ plugins {
 }
 
 group = "fr.phast"
-version = "0.0.22-SNAPSHOT"
+version = "0.0.25-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -50,8 +54,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.10")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.10")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     api("info.cqframework:model:1.5.11")
     //api("info.cqframework:model-jaxb:2.0.0")
@@ -68,7 +72,7 @@ dependencies {
     //api("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
     //api("org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2")
 
-    api("fr.phast:cql-engine-fhir:0.0.24-SNAPSHOT")
+    api("fr.phast:cql-engine-fhir:0.0.27-SNAPSHOT")
 }
 
 tasks.withType<KotlinCompile> {
