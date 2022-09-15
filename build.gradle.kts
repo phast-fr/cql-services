@@ -40,7 +40,7 @@ plugins {
 }
 
 group = "fr.phast"
-version = "0.0.36-SNAPSHOT"
+version = "0.0.37-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -72,7 +72,7 @@ dependencies {
     //api("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
     //api("org.eclipse.persistence:org.eclipse.persistence.moxy:3.0.2")
 
-    api("fr.phast:cql-engine-fhir:0.0.38-SNAPSHOT")
+    api("fr.phast:cql-engine-fhir:0.0.39-SNAPSHOT")
 }
 
 tasks.withType<KotlinCompile> {
